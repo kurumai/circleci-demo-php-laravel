@@ -70,7 +70,7 @@ jobs:
       - store_artifacts:
           path: tests/_output
 
-  deploy-to-k8s:
+  build-and-push-image:
     machine:
       image: ubuntu-1604:202007-01
       resource_class: large
@@ -96,6 +96,8 @@ workflows:
   version: 2.1
   workflow:
     jobs:
-      #- test
-      - deploy-to-k8s
+      - test
+      - build-and-push-image:
+          requires:
+            - test
 
