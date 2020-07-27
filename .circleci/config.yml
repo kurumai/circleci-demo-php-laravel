@@ -81,7 +81,7 @@ jobs:
           name: docker build
           command: |
             cd laradock && cp -p env-example .env
-            docker-compose build -d workspace
+            docker-compose build workspace
       - aws-ecr/ecr-login
       - aws-ecr/push-image:
           repo: laradock_workspace:latest
