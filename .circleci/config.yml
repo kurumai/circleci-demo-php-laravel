@@ -1,21 +1,12 @@
-# PHP CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-php/ for more details
-#
 version: 2
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.11.0
+
 jobs:
   test:
     docker:
-      # Specify the version you desire here
       - image: circleci/php:7.2-stretch
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # Using the RAM variation mitigates I/O contention
-      # for database intensive operations.
-      # - image: circleci/mysql:5.7-ram
-      # - image: redis:3
       - image: circleci/mysql:8.0.20-ram
         command: mysqld --default-authentication-plugin=mysql_native_password
         environment:
@@ -36,7 +27,7 @@ jobs:
           command: |
             curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
             sudo apt-get install -y nodejs
-
+      
       # Download and cache dependencies
 
       # composer cache
@@ -79,10 +70,28 @@ jobs:
       - store_artifacts:
           path: tests/_output
 
+  deploy-to-k8s:
+    machine:
+      image: circleci/ubuntu-1604:202007-01
+      resource_class: large
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run:
+          name: docker build
+          command: |
+            cd laradock && cp -p env-example .env
+            docker-compose build -d workspace
+      - aws-ecr/ecr-login:
+      - aws-ecr/push-image:
+          repo: laradock_workspace:latest
+      
+
+
 workflows:
   version: 2
   workflow:
     jobs:
-    - test
+      #- test
+      - deploy-to-k8s
 
-    
