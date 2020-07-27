@@ -82,6 +82,10 @@ jobs:
           command: |
             cd laradock && cp -p env-example .env
             docker-compose build workspace
+      - run:
+          name: docker tag
+          command: |
+            docker tag laradock_workspace 241099261431.dkr.ecr.ap-northeast-1.amazonaws.com/laradock_workspace
       - aws-ecr/push-image:
           repo: laradock_workspace
       
