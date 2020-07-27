@@ -86,6 +86,7 @@ jobs:
           name: docker tag
           command: |
             docker tag laradock_workspace 241099261431.dkr.ecr.ap-northeast-1.amazonaws.com/laradock_workspace
+      - aws-ecr/ecr-login
       - aws-ecr/push-image:
           repo: laradock_workspace
       
