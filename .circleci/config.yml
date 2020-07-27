@@ -84,7 +84,7 @@ jobs:
             docker-compose build workspace
       - aws-ecr/ecr-login
       - aws-ecr/push-image:
-          repo: laradock_workspace:latest
+          repo: laradock_workspace
       
 
 
